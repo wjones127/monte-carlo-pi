@@ -1,7 +1,7 @@
 Point = function() {
     this.x = randomInRange(-1, 1);
     this.y = randomInRange(-1, 1);
-    this.inCircle = Math.sqrt(Math.pow(this.x,2) + Math.pow(this.y, 2)) < 1;
+    this.inCircle = Math.pow(this.x,2) + Math.pow(this.y, 2) < 1;
 }
 
 Plot = function() {
@@ -16,11 +16,11 @@ Plot.prototype.addPoint = function () {
 }
 Plot.prototype.estimatePi = function () {
     var total = this.points.length;
-    var inCircle = this.points.filter(
-	function(value, index) {
-	    return value.inCircle;
-	}
-    ).length;
+    var inCircle = this.points.reduce(
+	function(running, current) {
+	    if (current.inCircle) return running + 1
+	    else return running
+	}, 0);
     return 4 * inCircle / total;
 }
 
