@@ -4,7 +4,7 @@
 <head>
 <title>Monte Carlo Pi</title>
 <link rel="stylesheet" type="text/css" href="style.css"/>
-<link rel="stylesheet" type="text/css" 
+<link rel="stylesheet" type="text/css"
       href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
 
 
@@ -21,6 +21,27 @@
       root of the resulting value.</p>
     <p>Note: this is not an efficient way to calculate Pi. But, hey, it is kind
       of fun!</p>
+
+    <form id="form-calc">
+	<div class="input-group">
+	    <label>Number of iterations:
+		<input type="text" value="100" id="iterations">
+	    </label>
+	    
+	    <div class="errors">
+		<!-- this is where the errors will go -->
+	    </div>
+	</div>
+	
+	<button id="btn-calculate" type="submit" class="btn btn-primary">Calculate!</button>
+	
+    </form>
+
+    <div class="progress-bar" role="progressbar" aria-valuenow="60" 
+	 aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+	<span class="sr-only">60% Complete</span>
+    </div>
+
   </div>
   <div class="col-md-9">
     <svg class="graphic"></svg>
@@ -34,7 +55,45 @@
 <script src="node_modules/d3/d3.min.js"></script>
 <script src="main.js"></script>
 <script>
+$('#form-calc').submit(function() {
+    var n = $('#iterations').val();
+    plotCalcs(n);
+    return false;
+})
 
-
+plotCalcs = function(n) {
+    // Calculate some data
+    plot = new Plot();
+    for (var i = 0; i < n; i++) plot.addPoint();
+    
+    var width = 600, height = 600;
+    
+    var scale = d3.scale.linear()
+			.domain([-1, 1])
+		 .range([0, width]);
+    
+    var graphic = d3.select('.graphic')
+		    .attr('width', width)
+		    .attr('height', height);
+    
+    var radius = 3;
+    
+    var points = graphic.selectAll('circle')
+			.data(plot.points)
+		 .enter()
+		 .append('circle')
+		 .attr('r', radius)
+		 .attr('cx', function(d) { return scale(d.x) })
+		 .attr('cy', function(d) { return scale(d.y) })
+		 .attr('fill', function(d) { return d.inCircle ? 'red' : 'black' } );
+    
+    var circle = graphic.append('circle')
+			.attr('r', scale(0))
+		 .attr('stroke', 'red')
+		 .attr('fill', 'none')
+		 .attr('cx', width / 2)
+		 .attr('cy', width / 2);
+    
+ };
 </script>
 </html>
