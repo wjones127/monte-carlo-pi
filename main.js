@@ -1,7 +1,7 @@
 Point = function() {
     this.x = randomInRange(-1, 1);
     this.y = randomInRange(-1, 1);
-    this.inCircle = Math.sqrt(this.x^2 + this.y^2) < 1;
+    this.inCircle = Math.sqrt(Math.pow(this.x,2) + Math.pow(this.y, 2)) < 1;
 }
 
 Plot = function() {
@@ -21,7 +21,7 @@ Plot.prototype.estimatePi = function () {
 	    return value.inCircle;
 	}
     ).length;
-    return Math.sqrt(4 * inCircle / total);
+    return 4 * inCircle / total;
 }
 
 function approxPi(iterations) {
