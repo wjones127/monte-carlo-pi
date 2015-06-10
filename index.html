@@ -11,6 +11,7 @@
 </head>
 <body>
 
+<div class="container-fluid">
 <div class="row">
   <div class="col-md-4">
     <h1>Monte Carlo Pi</h1>
@@ -21,6 +22,8 @@
       root of the resulting value.</p>
     <p>Note: this is not an efficient way to calculate Pi. But, hey, it is kind
       of fun!</p>
+
+
 
     <form id="form-calc">
 	<div class="input-group">
@@ -37,17 +40,14 @@
 	
     </form>
 
-    <div class="progress-bar" role="progressbar" aria-valuenow="60" 
-	 aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-	<span class="sr-only">60% Complete</span>
-    </div>
 
   </div>
-  <div class="col-md-9">
+  <div class="col-md-8">
     <svg class="graphic"></svg>
+    <svg class="convergencePlot"></svg>
   </div>
 </div>
-
+</div>
 </body>
 
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -61,11 +61,13 @@ $('#form-calc').submit(function() {
     return false;
 })
 
+
 plotCalcs = function(n) {
     // Calculate some data
     plot = new Plot();
-    for (var i = 0; i < n; i++) plot.addPoint();
-    
+    for (var i = 0; i < n; i++)	plot.addPoint();
+
+    // Create dartboard plot
     var width = 600, height = 600;
     
     var scale = d3.scale.linear()
@@ -76,7 +78,7 @@ plotCalcs = function(n) {
 		    .attr('width', width)
 		    .attr('height', height);
     
-    var radius = 3;
+    var radius = 2;
     
     var points = graphic.selectAll('circle')
 			.data(plot.points)
@@ -93,7 +95,51 @@ plotCalcs = function(n) {
 		 .attr('fill', 'none')
 		 .attr('cx', width / 2)
 		 .attr('cy', width / 2);
-    
+
+    // Create convergence plot
+    height = 300;
+    var scaley = d3.scale.linear().domain([0, 5]).range([0, height]);
+    var scalex = d3.scale.linear().domain([0, n]).range([0, width]);
+    var convPlot = d3.select('.convergencePlot')
+	.attr('width', width)
+	.attr('height', height);
+    var xaxis = d3.svg.axis().scale(scalex).tickSize(-height).tickSubdivide(true);
+    var yaxis = d3.svg.axis().scale(scaley).ticks(4).orient('left');
+    var lineFunc = d3.svg.line()
+			 .x(function(d, i) { return scalex(i) })
+			 .y(function(d) { return scaley(d) })
+			 .interpolate('linear');
+    convPlot.append('svg:path')
+	    .attr('d', lineFunc(plot.estimates))
+	    .attr('stroke', 'blue')
+	    .attr('stroke-width', 2)
+	    .attr('fill', 'none');
+    convPlot.append('svg:g')
+	    .attr('class', 'x axis')
+	    .attr('transform', 'translate(0,' + height + ')')
+	    .call(xaxis);
+    convPlot.append('svg:g')
+	    .attr('class', 'y axis')
+	    .attr('transform', 'translate(-25, 0)')
+	    .call(yaxis);
+
+    convPlot.append('line').attr('x1', 0).attr('x2', width)
+	    .attr('y1', scaley(Math.PI)).attr('y2', scaley(Math.PI))
+	.attr('stroke-width', 3).attr('stroke', 'red');
+
  };
+
+function range(start, count) {
+    if(arguments.length == 1) {
+        count = start;
+        start = 0;
+    }
+
+    var foo = [];
+    for (var i = 0; i < count; i++) {
+        foo.push(start + i);
+    }
+    return foo;
+}
 </script>
 </html>
