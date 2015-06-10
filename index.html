@@ -24,22 +24,36 @@
       of fun!</p>
 
 
-
-    <form id="form-calc">
-	<div class="input-group">
-	    <label>Number of iterations:
-		<input type="text" value="100" id="iterations">
-	    </label>
-	    
-	    <div class="errors">
-		<!-- this is where the errors will go -->
-	    </div>
+    <div class="panel panel-default">
+	<div class="panel-heading">
+	    <h3>Calcualte Pi!</h3>
 	</div>
-	
-	<button id="btn-calculate" type="submit" class="btn btn-primary">Calculate!</button>
-	
-    </form>
+	<div class="panel-body">
+	    <form id="form-init">
+		<div class="input-group">
+		    <label>Number of iterations:
+			<input type="text" value="100" id="iterations">
+		    </label>
+		    
+		    <div class="errors">
+			<!-- this is where the errors will go -->
+		    </div>
+		</div>
+		
+		<button id="btn-calculate" type="submit" class="btn btn-primary">Calculate!</button>
+	    </form>
 
+	    <label id="add-buttons-label" style="display: none;">Add
+		<div id="add-buttons" class="btn-group">
+		    <button id="btn-1" type="button" class="btn btn-default">1</button>
+		    <button id="btn-10" type="button" class="btn btn-default">10</button>
+		    <button id="btn-100" type="button" class="btn btn-default">100</button>
+		    <button id="btn-1000" type="button" class="btn btn-default">1,000</button>
+		</div>
+		more points</label>
+
+	</div>
+    </div>
 
   </div>
   <div class="col-md-8">
@@ -54,92 +68,23 @@
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="node_modules/d3/d3.min.js"></script>
 <script src="main.js"></script>
+<script src="charts.js"></script>
 <script>
-$('#form-calc').submit(function() {
+$('#form-init').submit(function() {
     var n = $('#iterations').val();
-    plotCalcs(n);
+    plotCalc.init(n);
+    $('#add-buttons-label').css('display', 'block');
+    $('#form-init').css('display', 'none');
     return false;
-})
+});
 
+var addValues = [1, 10, 100, 1000];
 
-plotCalcs = function(n) {
-    // Calculate some data
-    plot = new Plot();
-    for (var i = 0; i < n; i++)	plot.addPoint();
+$('#add-buttons').find('button').each(function(i){
+    $( this ).click(function() {
+	plotCalc.update(i);
+    });
+});
 
-    // Create dartboard plot
-    var width = 600, height = 600;
-    
-    var scale = d3.scale.linear()
-			.domain([-1, 1])
-		 .range([0, width]);
-    
-    var graphic = d3.select('.graphic')
-		    .attr('width', width)
-		    .attr('height', height);
-    
-    var radius = 2;
-    
-    var points = graphic.selectAll('circle')
-			.data(plot.points)
-		 .enter()
-		 .append('circle')
-		 .attr('r', radius)
-		 .attr('cx', function(d) { return scale(d.x) })
-		 .attr('cy', function(d) { return scale(d.y) })
-		 .attr('fill', function(d) { return d.inCircle ? 'red' : 'black' } );
-    
-    var circle = graphic.append('circle')
-			.attr('r', scale(0))
-		 .attr('stroke', 'red')
-		 .attr('fill', 'none')
-		 .attr('cx', width / 2)
-		 .attr('cy', width / 2);
-
-    // Create convergence plot
-    height = 300;
-    var scaley = d3.scale.linear().domain([0, 5]).range([0, height]);
-    var scalex = d3.scale.linear().domain([0, n]).range([0, width]);
-    var convPlot = d3.select('.convergencePlot')
-	.attr('width', width)
-	.attr('height', height);
-    var xaxis = d3.svg.axis().scale(scalex).tickSize(-height).tickSubdivide(true);
-    var yaxis = d3.svg.axis().scale(scaley).ticks(4).orient('left');
-    var lineFunc = d3.svg.line()
-			 .x(function(d, i) { return scalex(i) })
-			 .y(function(d) { return scaley(d) })
-			 .interpolate('linear');
-    convPlot.append('svg:path')
-	    .attr('d', lineFunc(plot.estimates))
-	    .attr('stroke', 'blue')
-	    .attr('stroke-width', 2)
-	    .attr('fill', 'none');
-    convPlot.append('svg:g')
-	    .attr('class', 'x axis')
-	    .attr('transform', 'translate(0,' + height + ')')
-	    .call(xaxis);
-    convPlot.append('svg:g')
-	    .attr('class', 'y axis')
-	    .attr('transform', 'translate(-25, 0)')
-	    .call(yaxis);
-
-    convPlot.append('line').attr('x1', 0).attr('x2', width)
-	    .attr('y1', scaley(Math.PI)).attr('y2', scaley(Math.PI))
-	.attr('stroke-width', 3).attr('stroke', 'red');
-
- };
-
-function range(start, count) {
-    if(arguments.length == 1) {
-        count = start;
-        start = 0;
-    }
-
-    var foo = [];
-    for (var i = 0; i < count; i++) {
-        foo.push(start + i);
-    }
-    return foo;
-}
 </script>
 </html>
