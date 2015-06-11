@@ -43,7 +43,7 @@
 		<button id="btn-calculate" type="submit" class="btn btn-primary">Calculate!</button>
 	    </form>
 
-	    <label id="add-buttons-label" style="display: none;">Add
+	    <span id="add-buttons-label" style="display: none;">Add
 		<div id="add-buttons" class="btn-group">
 		    <button id="btn-1" type="button" class="btn btn-default">1</button>
 		    <button id="btn-10" type="button" class="btn btn-default">10</button>
@@ -82,7 +82,7 @@ var addValues = [1, 10, 100, 1000];
 
 $('#add-buttons').find('button').each(function(i){
     $( this ).click(function() {
-	plotCalc.update(i);
+	plotCalc.update(addValues[i]);
     });
 });
 

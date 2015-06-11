@@ -51,6 +51,11 @@
 		  'font-size': '20px'})
 	    .text(Math.PI.toString());
 
+	convergence.append('text')
+	    .attr({'x': width - 200, 'y': height - 30, 'fill': 'steelblue',
+		  'font-size': '20px', 'class': 'curr-estimate'})
+	    .text(plot.estimates[plot.estimates.length-1]);
+
 	scalex = d3.scale.linear().domain([0, n])
 	    .range([margin, width + margin]);
 
@@ -78,9 +83,10 @@
 
 	convergence.append('path')
 	    .attr({'d': lineFunc(plot.estimates),
-		   'stroke': 'blue',
+		   'stroke': 'steelblue',
 		   'stroke-width': 2,
-		   'fill': 'none'});
+		   'fill': 'none',
+		   'class': 'line'});
 
 	// Add points to dartboard by simply updating it
 	updateDartboard();
@@ -110,13 +116,12 @@
     function updateConvergence() {
 	// The Convergence:
 	scalex.domain([0, plot.estimates.length]);
-	var changes = convergence.transition();
-	changes.select('.line')
-	    .duration(750)
+	convergence.select('.line')
 	    .attr('d', lineFunc(plot.estimates));
-	changes.select('.x.axis')
-	    .duration(750)
+	convergence.select('.x.axis')
 	    .call(xaxis)
+	convergence.select('.curr-estimate')
+	    .text(plot.estimates[plot.estimates.length-1]);
    }
 
 })(this.plotCalc = {});
