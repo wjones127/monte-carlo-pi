@@ -1,0 +1,7 @@
+.axis path {
+    fill: none;
+    stroke: black;
+}
+.tick {
+    stroke: black;
+}

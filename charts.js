@@ -3,7 +3,7 @@
       Controls the create of two plots: the dartboard and the convergence. The
       dartboard visualizes where the random points land, and whether or not
       they are in the circle. The convergence plot shows the estimate of Pi
-      compared to the number of points in the sample considered. 
+      compared to the number of points in the sample considered.
      */
     var plot, dartboard, convergence, xaxis, yaxis, lineFunc;
 
